@@ -1,0 +1,14 @@
+11  Broadband.OPT  500-1000 nm spectrograph (alpha=35.64, stop O16, tilt -6.0): fiber butted to 30um slit at Z=0 -> f78 doublet / 600 l/mm REFLECTIVE / f78 doublet / cyl flattener -> TCD1304
+     Index:  type:        X:        Z:    Pitch:      Curv:   Gx: Order:   Diam:     Dx:     Dy:Form: notes
+----------:------:---------:---------:---------:----------:-----:------:-------:-------:-------:----:
+          :  lens:   0.0000:  70.3797:   0.0000:  0.004534:     :      : 25.400:       :       :    : collimator AC254-045-B x1.5556 s1 (N-SF6HT flint outer, f=70 O25.4)
+   N-SF6HT:  lens:   0.0000:  73.4997:   0.0000:  0.023031:     :      : 25.400:       :       :    : collimator s2 (N-SF6HT -> N-LAK22)
+   N-LAK22:  lens:   0.0000:  83.8997:   0.0000: -0.019637:     :      : 25.400:       :       :    : collimator s3 (N-LAK22 -> collimated space)
+          :  iris:   0.0000: 103.8997:   0.0000:  0.000000:     :      : 16.000:       :       :    : aperture stop O16 (camera f/4.4, collimator f/4.4)
+          :mirror:   0.0000: 153.8997:  35.6400:  0.000000:  600:     1: 50.000:       :       :   S: grating 600 l/mm order1 REFLECTIVE, alpha=35.64 (45 deg deviation mount)
+          :  lens: -30.5497: 121.5429:-136.6455:  0.019637:     :      : 38.000:       :       :    : camera AC254-045-B x1.5556 s1 (N-LAK22 crown outer, f=70 O40)
+   N-LAK22:  lens: -37.6894: 113.9809:-136.6455: -0.023031:     :      : 38.000:       :       :    : camera s2 (N-LAK22 -> N-SF6HT)
+   N-SF6HT:  lens: -39.8313: 111.7123:-136.6455: -0.004534:     :      : 38.000:       :       :    : camera s3 (N-SF6HT -> detector)
+          :  lens: -79.6352:  69.5538:-136.6455: -0.027844:     :      : 38.000:       :       :    : field flattener CYL s1 (cyl f=-70, R=-35.9, concave->camera)
+     N-BK7:  lens: -81.3515:  67.7360:-136.6455:  0.000000:     :      : 38.000:       :       :    : field flattener CYL s2 (plano -> detector)
+          :   CCD: -89.9329:  58.6470:-142.6455:  0.000000:     :      :       : 29.100:  0.200:   S: detector TCD1304 29.1mm x 0.2mm, 131.0 mm along arm, tilt -6.0

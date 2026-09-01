@@ -1,0 +1,46 @@
+# Licensing — 500–1000 nm design line
+
+Copyright 2026 CheckAg (Tony Francis)
+
+This folder is part of the JASPER_VIS_NIR_Optics_Design repository. Licensing
+is governed by the repository-root `LICENSE` allocation and the full texts in
+the root `LICENSES/` directory. The allocation as it applies to the files in
+this folder is restated below for clarity; the two are intended to agree.
+
+SPDX-License-Identifier: MIT AND CERN-OHL-S-2.0
+
+
+## Software — MIT
+
+All Python source files (`*.py`) are licensed under the MIT License
+(`LICENSES/MIT.txt` at the repository root).
+
+    SPDX-License-Identifier: MIT
+
+The scripts are the tools that generate and analyse the design; a prescription
+they emit is Covered Source under CERN-OHL-S-2.0 (below).
+
+
+## Optical-design source — CERN-OHL-S-2.0
+
+The following are licensed under CERN-OHL-S-2.0 (Strongly Reciprocal;
+`LICENSES/CERN-OHL-S-2.0.txt` at the repository root):
+
+    SPDX-License-Identifier: CERN-OHL-S-2.0
+
+  - Optical prescriptions and design-source: `Broadband.OPT`, `Broadband_B4.OPT`,
+    `Broadband.MED`, `Broadband.RAY` (and the prescription they encode)
+  - Design documentation: `README.md`
+  - Generated design outputs: `spots.json`, `JASPER_spot_analysis.html`
+  - Any modifications or larger works containing this Covered Source, as
+    provided by CERN-OHL-S-2.0
+
+This is a strongly reciprocal licence: distributing a product based on this
+Covered Source, or a modified version, requires making the complete
+corresponding source available under the same licence.
+
+
+## Other files
+
+Any file not identified above is not yet licensed (all rights reserved);
+contact the copyright holder or open an issue to have it allocated.
