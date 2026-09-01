@@ -4,9 +4,14 @@ Copyright 2026 CheckAg (Tony Francis)
 
 This repository mixes software and open-hardware/optical-design source, which
 are licensed differently. The allocation below is authoritative; each file is
-covered by exactly one license as follows.
+covered by exactly one license — no single file is under both licenses at once.
 
-SPDX-License-Identifier: MIT AND CERN-OHL-S-2.0
+Per-file SPDX identifiers appear in sections 1 and 2 below (`MIT` for code,
+`CERN-OHL-S-2.0` for optical-design source). If a tool needs one expression for
+the repository as a whole, the aggregate is `MIT AND CERN-OHL-S-2.0`, where
+`AND` carries its standard SPDX meaning for a collection — "this repository
+contains files under each license" — and does NOT mean any individual work is
+licensed under both cumulatively.
 
 
 ## 1. Software

@@ -7,7 +7,12 @@ is governed by the repository-root `LICENSE` allocation and the full texts in
 the root `LICENSES/` directory. The allocation as it applies to the files in
 this folder is restated below for clarity; the two are intended to agree.
 
-SPDX-License-Identifier: MIT AND CERN-OHL-S-2.0
+Each file is covered by exactly one license — no single file is under both at
+once. Per-file SPDX identifiers appear in the sections below (`MIT` for code,
+`CERN-OHL-S-2.0` for optical-design source). The repository aggregate, for
+tooling that needs one expression, is `MIT AND CERN-OHL-S-2.0`, where `AND`
+means "the repository contains files under each license" — not that any
+individual work is licensed under both.
 
 
 ## Software — MIT
