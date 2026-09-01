@@ -1,5 +1,7 @@
 # JASPER_VIS_NIR_Optics_Design
 VIS-NIR Spectrometer design using Beam Four and design files generated using AI generated python scripts  
+
+
 # JASPER — VIS-NIR Optics Design
 
 Open, reproducible optical designs for **JASPER**, an open-source, right-to-repair VIS-NIR
@@ -20,7 +22,7 @@ Built from stock 1-inch optics plus one custom cylindrical field flattener that 
 camera's dispersion-plane field curvature. The offline Python tracer reproduces BeamFour to
 better than 0.1 µm per wavelength, so the number is checked in two independent tools.
 
-→ Files and full write-up: [`500_1000nm/`](500_1000nm/)
+→ Files and full write-up: [`500_1000nm/`]((https://github.com/CheckAG/JASPER_VIS_NIR_Optics_Design/tree/500_1000_nm_1_9nm_Res))
 
 ---
 
@@ -32,7 +34,8 @@ reference trace you can compare against:
 ```
 JASPER_VIS_NIR_Optics_Design/
 ├── README.md            ← you are here
-├── LICENSE
+├── LICENSE              ← licence allocation (which file → which licence)
+├── LICENSES/            ← full texts: MIT.txt, CERN-OHL-S-2.0.txt
 └── 500_1000nm/          ← 500–1000 nm design (~1.9 nm, BeamFour-validated)
     ├── README.md            reproduce steps + gotchas
     ├── *.py                 generators, tracer, analysis, report
@@ -79,10 +82,17 @@ the exact commands and the BeamFour steps.
 
 ## Licensing
 
-- **Code** (`.py`): MIT — see [`LICENSE`](LICENSE).
-- **Optical designs** (`.OPT` / `.MED` / `.RAY` and the prescriptions): **CERN-OHL-S-2.0**
-  (strongly-reciprocal open hardware). SPDX: `CERN-OHL-S-2.0` ·
-  full text: <https://ohwr.org/cern_ohl_s_v2.txt>
+This repo mixes software and open-hardware source; each file is covered by exactly one
+licence. The repository-root [`LICENSE`](LICENSE) is the authoritative allocation, with full
+texts in [`LICENSES/`](LICENSES/):
+
+- **Code** (`*.py`): **MIT** — the tools that generate and analyse the design.
+- **Optical-design source** (`*.OPT` / `*.MED` / `*.RAY`, the prescriptions, the design docs,
+  and generated outputs like `spots.json` / the report): **CERN-OHL-S-2.0**, strongly-reciprocal
+  open hardware. SPDX: `CERN-OHL-S-2.0` · full text: <https://ohwr.org/cern_ohl_s_v2.txt>
+
+The scripts are permissive, but a prescription they *emit* is Covered Source under
+CERN-OHL-S-2.0 — modify a script freely; a new design it produces stays open.
 
 ## About
 
@@ -94,4 +104,5 @@ Optical ray tracing by BeamFour (Stellar Software / M. Lampton et al.).
 
 Corrections, questions, and "have you tried…" are welcome via
 [issues](https://github.com/CheckAG/JASPER_VIS_NIR_Optics_Design/issues).
+
 
