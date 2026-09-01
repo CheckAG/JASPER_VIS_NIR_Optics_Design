@@ -1,21 +1,59 @@
-MIT License
+# Licensing — JASPER VIS-NIR Optics Design
 
-Copyright (c) 2026 CheckAg
+Copyright 2026 CheckAg (Tony Francis)
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+This repository mixes software and open-hardware/optical-design source, which
+are licensed differently. The allocation below is authoritative; each file is
+covered by exactly one license as follows.
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+SPDX-License-Identifier: MIT AND CERN-OHL-S-2.0
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+
+## 1. Software
+
+All Python source files (`*.py`) in this repository are licensed under the
+**MIT License**. See `LICENSES/MIT.txt`.
+
+    SPDX-License-Identifier: MIT
+
+Note on intent: the Python scripts are the *tools* that generate and analyse
+the design. They are permissively licensed so anyone can reuse or adapt them
+freely. The optical prescriptions those tools *emit* are open-hardware source
+and are covered by CERN-OHL-S-2.0 under section 2 below — modifying a script is
+MIT, but a new prescription it produces is Covered Source.
+
+
+## 2. Open-hardware / optical-design source
+
+The following are licensed under **CERN-OHL-S-2.0** (CERN Open Hardware Licence
+Version 2 — Strongly Reciprocal). See `LICENSES/CERN-OHL-S-2.0.txt`.
+
+    SPDX-License-Identifier: CERN-OHL-S-2.0
+
+  - Optical prescriptions and design-source files: `*.OPT`, `*.MED`, `*.RAY`
+  - Design documentation and write-ups: `*.md` (READMEs, design plans, notes)
+  - Generated design outputs: `spots.json` and the spot-analysis report
+    (`*_spot_analysis.html` / `JASPER_spot_analysis.html`)
+  - Optical/mechanical drawings, tolerance documents, coating specifications,
+    bills of materials, and other materials explicitly marked CERN-OHL-S-2.0
+  - Any modifications or larger works containing this Covered Source, as
+    provided by CERN-OHL-S-2.0
+
+This is a **strongly reciprocal** licence: if you make and distribute a
+product based on this Covered Source, or distribute a modified version, you
+must make the complete corresponding source available under the same licence.
+
+
+## 3. Other files
+
+Any file not expressly identified in section 1 or 2 above is **not yet
+licensed** — all rights reserved by default. Please contact the copyright
+holder before reusing it, or open an issue asking for it to be allocated.
+
+
+---
+
+Full licence texts are in the `LICENSES/` directory:
+
+  - `LICENSES/MIT.txt`               — MIT License
+  - `LICENSES/CERN-OHL-S-2.0.txt`    — CERN-OHL-S-2.0 (see note in that file)
