@@ -38,7 +38,7 @@ parent-folder path confusion.
 - Both powered doublets are **one prescription** (AC254-045-B scaled to f = 78), so the
   achromatic correction carries over exactly.
 
-### Honest scope
+### Scope
 This is a **geometric** design validated in BeamFour, and the ~1.9 nm is the single-exposure
 delivered figure. Each wavelength is already ~0.5 nm at *its own* best focus, so the optics
 themselves aren't the wall — the single flat detector is, together with the small chromatic part
