@@ -22,7 +22,7 @@ Built from stock 1-inch optics plus one custom cylindrical field flattener that 
 camera's dispersion-plane field curvature. The offline Python tracer reproduces BeamFour to
 better than 0.1 µm per wavelength, so the number is checked in two independent tools.
 
-→ Files and full write-up: [`500_1000nm/`]((https://github.com/CheckAG/JASPER_VIS_NIR_Optics_Design/tree/500_1000_nm_1_9nm_Res))
+→ Files and full write-up: [`500_1000nm/`]((https://github.com/CheckAG/JASPER_VIS_NIR_Optics_Design/tree/main/500_1000nm))
 
 ---
 
@@ -39,14 +39,14 @@ JASPER_VIS_NIR_Optics_Design/
 └── 500_1000nm/          ← 500–1000 nm design (~1.9 nm, BeamFour-validated)
     ├── README.md            reproduce steps + gotchas
     ├── *.py                 generators, tracer, analysis, report
-    ├── Broadband_B4.OPT      the file you load into BeamFour (cylinder as Cx)
+    ├── Broadband.OPT      the file you load into BeamFour (cylinder as Cx)
     ├── Broadband.MED/.RAY    glasses + input rays
     └── spots.json / *.html   reference traced result + report
 ```
 
 | Design line | Range | Detector | Resolution | Status |
 |---|---|---|---|---|
-| [`500_1000nm/`](https://github.com/CheckAG/JASPER_VIS_NIR_Optics_Design/tree/500_1000_nm_1_9nm_Res) | 500–1000 nm | TCD1304 (29.1 mm) | ~1.9 nm mean / 2.9 nm worst | BeamFour-validated |
+| [`500_1000nm/`](https://github.com/CheckAG/JASPER_VIS_NIR_Optics_Design/tree/main/500_1000nm) | 500–1000 nm | TCD1304 (29.1 mm) | ~1.9 nm mean / 2.9 nm worst | BeamFour-validated |
 
 (More lines — e.g. extended-range and alternate-detector variants — will be added as folders.)
 
