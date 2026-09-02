@@ -22,7 +22,7 @@ Built from stock 1-inch optics plus one custom cylindrical field flattener that 
 camera's dispersion-plane field curvature. The offline Python tracer reproduces BeamFour to
 better than 0.1 µm per wavelength, so the number is checked in two independent tools.
 
-→ Files and full write-up: [`500_1000nm/`]((https://github.com/CheckAG/JASPER_VIS_NIR_Optics_Design/tree/main/500_1000nm))
+→ Files and full write-up: [`500_1000nm/`](https://github.com/CheckAG/JASPER_VIS_NIR_Optics_Design/tree/main/500_1000nm)
 
 ---
 
