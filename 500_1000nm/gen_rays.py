@@ -1,13 +1,12 @@
 #!/usr/bin/env python3
-"""Generate Broadband.RAY for the 400-1000 nm build (fiber-launch, colour-tagged).
+"""Generate Broadband.RAY for the 500-1000 nm build (fiber-launch, colour-tagged).
 
-Identical convention to the JASPER project so the two builds are directly comparable:
     python gen_rays.py fan            # 5-ray fan/wavelength (chief + 4 marginals) -> Layout
-    python gen_rays.py spots [rings]  # 3 fields x hexapolar pupil x 7 waves -> spot diagrams
+    python gen_rays.py spots [rings]  # 3 fields x hexapolar pupil x waves -> spot diagrams
 
-Rays launch from the fiber face (Z=0) into the NA 0.22 emission cone; they traverse the
-AC254-045-B relay, the 30 um slit, then the 400-1000 nm 600 l/mm reflective spectrograph.
-Overwrites ../Broadband.RAY.
+Rays launch from the fiber face at the slit plane (Z=0) into the NA 0.22 emission cone and
+enter the 500-1000 nm 600 l/mm reflective spectrograph directly (no relay in the released
+design). Overwrites Broadband.RAY in this directory.
 
 *** HARD LIMIT: BeamFour reads at most JMAX = 3600 rows. ***
 

@@ -55,13 +55,12 @@ a **custom** part (like the scaled f = 78 doublet) — both need sourcing or cus
 | File | Role |
 |---|---|
 | `med_gen.py` | Sellmeier → `Broadband.MED` (N-LAK22 / N-SF6HT / N-BK7, 400–1000 nm) |
-| `frontend_gen.py` | Fold/arm-window solver → `Broadband.OPT` (run with **no args** for the released design) |
+| `frontend_gen.py` | Prescription generator → `Broadband.OPT` (run with **no args** for the released design; cylinder written directly in BeamFour's `Cx` column) |
 | `gen_rays.py` | Fiber-cone ray generator → `Broadband.RAY` (auto-caps at BeamFour's 3600-ray limit) |
-| `to_b4.py` | `Broadband.OPT` → `Broadband_B4.OPT` (moves the cylinder into BeamFour's `Cx` column) |
 | `trace_check.py` | Standalone offline ray tracer; reproduces BeamFour to <0.1 µm — for debugging |
 | `analyze_spots.py` | BeamFour-traced `Broadband.RAY` → `spots.json` (per-wavelength spot stats) |
 | `build_spot_html.py` | `spots.json` → `JASPER_spot_analysis.html` (the report) |
-| `Broadband_B4.OPT` | **The file you load into BeamFour** (cylinder as `Cx`) |
+| `Broadband.OPT` | **The file you load into BeamFour** (single prescription; cylinder already in `Cx` form) |
 | `Broadband.MED` / `Broadband.RAY` | Glasses and input rays for BeamFour |
 | `spots.json` / `JASPER_spot_analysis.html` | Reference traced result and report (~1.9 nm) — to compare against |
 
@@ -74,39 +73,38 @@ Requires Python 3 + NumPy, and [BeamFour](https://www.stellarsoftware.com/) (fre
 ```bash
 pip install -r requirements.txt
 
-# 1. Generate the BeamFour inputs (all written to this directory)
-python med_gen.py            # -> Broadband.MED
-python frontend_gen.py       # -> Broadband.OPT   (no args = the released 1.9 nm design)
-python gen_rays.py spots     # -> Broadband.RAY   (3042 rays, JMAX-safe)
-python to_b4.py              # -> Broadband_B4.OPT (BeamFour cylindrical form)
+# 1. Generate the three BeamFour inputs (Broadband.MED, Broadband.OPT, Broadband.RAY) — one line:
+python med_gen.py && python frontend_gen.py && python gen_rays.py spots
 
 # 2. In BeamFour (do this by hand — BeamFour is a GUI):
-#    - File → Open  Broadband_B4.OPT   (this replaces the optics table in memory!)
+#    - File → Open  Broadband.OPT     (this replaces the optics table in memory!)
 #    - Open Broadband.MED and Broadband.RAY
 #    - Run → Layout   (confirm all six wavelengths reach the detector)
 #    - Run → InOut    (fills the xfinal/yfinal columns)
 #    - SAVE the ray table back to  Broadband.RAY  IN THIS DIRECTORY
 
-# 3. Analyse and report
-python analyze_spots.py      # -> spots.json  (prints a span self-check)
-python build_spot_html.py    # -> JASPER_spot_analysis.html
+# 3. Analyse and report — one line:
+python analyze_spots.py && python build_spot_html.py
 ```
 
+`frontend_gen.py` writes the cylindrical flattener straight into BeamFour's `Cx` column, so
+`Broadband.OPT` is the file you load directly — there is no conversion step and only one `.OPT`.
+
 **Sanity check:** `analyze_spots.py` prints the spectrum span. It must read **≈ 28.37 mm**
-("CORRECT 131mm design"). If it prints ~28.58 mm, BeamFour traced the *old* optics — you loaded
-the wrong OPT, or saved the trace somewhere other than this folder. The offline tracer matches
-BeamFour exactly, so you can also spot-check geometry with `python trace_check.py`.
+("CORRECT 131mm design"). If it prints something else, BeamFour re-traced with stale optics —
+re-open `Broadband.OPT` and save the trace into this folder. The offline tracer matches BeamFour
+exactly, so you can also spot-check geometry with `python trace_check.py`.
 
 ### Common gotchas (these cost real time)
-- **BeamFour caches the last-loaded OPT.** You must `File → Open` the new OPT *before* InOut, or
-  it re-traces with the previous optics still in memory.
+- **BeamFour caches the last-loaded OPT.** You must `File → Open Broadband.OPT` *before* InOut,
+  or it re-traces with whatever optics were previously in memory.
 - **The traced RAY must be saved into this directory** as `Broadband.RAY`. `analyze_spots.py`
   reads it from here; a stale copy elsewhere gives old numbers.
 - **BeamFour silently truncates ray files over 3600 rows**, dropping whole wavelengths off the
   end. `gen_rays.py` enforces the cap.
-- **The cylinder needs the `Cx` column.** Load `Broadband_B4.OPT` (not `Broadband.OPT`) in
-  BeamFour. If the traced resolution comes out ~5.5 nm, BeamFour put the cylinder in the wrong
-  plane — swap the `Cx` header/value to `Cy` and re-trace.
+- **The cylinder lives in the `Cx` column** (curved in dispersion, flat along the slit). If the
+  traced resolution comes out ~5.5 nm, BeamFour read it in the wrong plane — check that the
+  flattener row has its curvature under `Cx` (not `Cy`) and re-trace.
 
 ---
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Parse the BeamFour-traced Broadband.RAY into per-(wavelength, field) spot statistics.
 
-Workflow: in BeamFour, load Broadband_B4.OPT + Broadband.MED + Broadband.RAY, Run -> InOut,
+Workflow: in BeamFour, load Broadband.OPT + Broadband.MED + Broadband.RAY, Run -> InOut,
 then SAVE the ray table back to Broadband.RAY *in this directory*. This script reads it and
 writes spots.json (consumed by build_spot_html.py) next to itself.
 

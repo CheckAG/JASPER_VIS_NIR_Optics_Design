@@ -1,44 +1,42 @@
 #!/usr/bin/env python3
-"""Emit ../Broadband*.OPT — the 500-1000 nm spectrograph in BeamFour.
+"""Generate Broadband.OPT — the 500-1000 nm JASPER spectrograph, ready to trace in BeamFour.
 
-    python frontend_gen.py [alpha] [stop|-] [det_tilt] [suffix] [flattener_f|-] [det_arm] [norelay]
+Run with no arguments to reproduce the released design exactly:
 
-    python frontend_gen.py                                     # default: tilt -6.5, no flattener
-    python frontend_gen.py 35.64 16 -6.67 _flat -250 119.46    # field-flattener variant
-    python frontend_gen.py norelay                             # fiber butted to the slit
+    python frontend_gen.py            ->  Broadband.OPT
 
-`norelay` deletes the AC254-045-B relay and puts the fiber face ON the slit (Z=0). The relay
-is a B-design achromat (650-1050 nm); at 400 nm it focuses 1.75 mm past the slit plane, so the
-30 um slit rejects all but ~1% of the 400 nm cone -- that, not the spectrograph, is why 400 nm
-is missing from the traced spots. No slit position serves both ends (scan: 400 nm peaks at
-dZ=+1.5, 700-1000 nm at dZ=-0.25), so this cannot be refocused away, only removed.
-The relay was 1:1, so deleting it costs no light; the filter slot moves to the collimated space
-by the aperture stop, which is the better place for it anyway.
+The file it writes is loaded straight into BeamFour (File -> Open). The cylindrical field
+flattener is already written in BeamFour's convention (curvature in the Cx column, Curv = 0),
+so there is no separate conversion step -- one script, one .OPT file.
 
-Detector tilt defaults to -6.5 deg and the detector to 118.0 mm along the arm: the measured
-optimum (camera_study.py), 10.1 nm worst vs 35.9 nm for the original tilt-0 / 119.79 build.
+Optical layout (global X-Z plane; X = across-dispersion, Z = downstream):
 
-Layout (global X-Z plane, X = across-dispersion, Z = downstream):
-  FRONT-END (reused verbatim from JASPER_4f.OPT, on the +Z axis):
-    fiber(Z=0) -> relay L1 AC254-045-B -> filter-slot gap -> relay L2 -> slit(30um)
-  SPECTROGRAPH (the slit is its object):
-    slit --63.161--> collimator --O16 stop--> 70 --> grating(600 l/mm, mirror, alpha)
-    then the diffracted arm back-folds at -(180-(alpha-beta_c)); along it:
-      --44.5--> camera --> TCD1304 at 118.0 mm along the arm, tilted -6.5 deg
+    fiber face = 30 um slit (Z = 0, no relay)
+      -> f = 78 mm collimator     (AC254-045-B doublet scaled x1.7333: N-SF6HT flint / N-LAK22 crown)
+      -> O16 aperture stop        (f/4.9)
+      -> 600 l/mm reflective grating, alpha = 35.64 deg (45 deg deviation mount)
+      -> f = 78 mm camera         (same doublet, flipped)
+      -> plano-cylindrical N-BK7 field flattener (cyl f = -70 mm, power in the dispersion plane only)
+      -> TCD1304 detector, 29.1 mm, at 131 mm along the diffracted arm, tilted -6 deg
 
-Both spectrograph lenses are ONE prescription: the AC254-045-B doublet scaled x1.5556 to
-f=70 mm (curvatures /1.5556, thicknesses x1.5556). Scaling preserves the glasses and the
-shape factor, so the achromatic correction carries over exactly; it is used at f/3.5 here
-versus f/1.8 native, so it is working well inside its design speed.
-They differ only in aperture: the collimator is O25.4 (it sees the O16 beam and a 1 mm
-slit height, nothing more), the camera is O40 (it sits in the +-10.5 deg dispersed fan,
-where the DIFFRACTED beam is anamorphically widened -- see the footprint note below).
-The collimator keeps the relay-L1 orientation (flint outer to the slit); the camera is
-flipped, matching the JASPER spec-L2 convention.
+Both powered lenses are ONE prescription: the Thorlabs AC254-045-B doublet scaled to f = 78
+(curvatures / 1.7333, thicknesses x 1.7333). Scaling preserves the glasses and the shape
+factor, so the achromatic correction carries over exactly. The collimator keeps the flint
+outer toward the slit; the camera is the same doublet flipped (crown outer to the beam). The
+cylinder corrects the camera's dispersion-plane field curvature -- the resolution limiter --
+without magnifying the slit-height axis.
 
-The optional field flattener (5th arg) is supported but NOT enabled by default: measured
-head to head at equal spectrum extent it is a wash (11.6 nm worst / 7.0 mean, against 10.0 /
-7.4 without), so it does not earn a part. See DESIGN_PLAN.md S11.
+Delivered resolution, single exposure: ~1.9 nm mean / 2.9 nm worst across 500-1000 nm, on the
+Toshiba TCD1304 (BeamFour-traced; trace_check.py reproduces BeamFour to < 0.1 um per wavelength).
+
+Everything is optional-argument / environment driven for experiments, but the DEFAULTS ARE the
+released design:
+
+    python frontend_gen.py [alpha] [stop|-] [det_tilt] [suffix] [flattener_f|-] [det_arm] [relay]
+
+Env overrides (each defaults to the released value): TLO/THI band edges, FCAM camera focal
+length, CYLF cylinder focal length, CYLGAP cylinder-to-detector gap, CENTER_NM field decenter.
+Passing "relay" restores the AC254-045-B fiber relay in place of the butted fiber.
 """
 import math
 import os
@@ -68,7 +66,7 @@ OPTFILE = os.path.join(ROOT, f"Broadband{SUFFIX}.OPT")
 if len(sys.argv) < 3:
     STOP = 16.0
 
-# ---- design constants (see ../DESIGN_PLAN.md) -------------------------------
+# ---- design constants -------------------------------------------------------
 LPMM = 600
 # The camera and detector are centred on the ray that bisects the SPECTRUM, not on the
 # middle wavelength. Because beta(lambda) is nonlinear, 700 nm sits 0.2 mm off the midpoint
@@ -97,18 +95,19 @@ D_STOP = 20.000                     # collimator s3 -> aperture stop
 # lens, which is what clipped 700-1000 nm out of the first trace.
 D_GRT_CAM = 44.500
 # Detector distance measured along the arm FROM THE GRATING (not from the last lens), because
-# that is what the focus optimisation in camera_study.py varies. 118.0 mm and tilt -6.5 deg are
-# the measured optimum: 10.1 nm worst / 7.6 nm mean, 25.0 mm extent, no vignetting.
-# The old value was 119.79 with tilt 0 -> 35.9 nm worst.
-DET_ARM = 131.000                   # release optimum for the f=78 cylinder design
+# that is the focus parameter. 131.0 mm with tilt -6.0 deg is the released optimum for the
+# f=78 camera + cylindrical flattener: ~1.9 nm mean / 2.9 nm worst, 28.37 mm spectrum extent,
+# no vignetting. A different camera or flattener has its own best focus, so any variant must
+# re-specify this (6th CLI arg) or it will be defocused.
+DET_ARM = 131.000                   # released optimum for the f=78 cylinder design
 N_BK7_700 = 1.51306                 # flattener glass, index at band centre
 FLAT_GAP = 8.333                    # flattener s1 -> detector, mm (optimised)
 FLAT_T = 2.500                      # flattener centre thickness, mm
 if DET_ARM_CLI:
     DET_ARM = DET_ARM_CLI
 
-T_FLINT = 1.8 * SCALE               # 2.800
-T_CROWN = 6.0 * SCALE               # 9.333
+T_FLINT = 1.8 * SCALE               # 3.120 at f=78
+T_CROWN = 6.0 * SCALE               # 10.400 at f=78
 
 C1 = 0.007859 / SCALE               # weak flint outer   (R  127.2 -> 197.9)
 C2 = 0.039920 / SCALE               # cemented interface (R   25.1 ->  39.0)
@@ -136,10 +135,22 @@ if NORELAY:
 
 
 def row(mat, typ, X, Z, pitch, curv, gx, order, diam, dx, dy, form, note):
+    """One optics-table line, including BeamFour's Cx column.
+
+    A cylindrical surface (its note contains CYL, and it is the curved side, not the plano
+    side) is written the way BeamFour expects a cylinder: its curvature goes in the Cx column
+    with Curv = 0, so it is curved in the x-z dispersion plane and flat along the slit height.
+    Every other surface leaves Cx blank and keeps its curvature in Curv. Emitting Cx here,
+    rather than as a separate post-processing pass, keeps the pipeline at a single .OPT file."""
     def num(v, w, p):
         return (" " * w) if v == "" else f"{v:{w}.{p}f}"
+    if "CYL" in note and "plano" not in note:
+        cx = f"{curv:10.6f}"        # curvature -> Cx (power in the dispersion plane only)
+        curv = 0.0                  # Curv = 0  (flat along the slit height)
+    else:
+        cx = " " * 10               # blank Cx: ordinary spherical or flat surface
     return (
-        f"{mat:>10}:{typ:>6}:{X:9.4f}:{Z:9.4f}:{pitch:9.4f}:{curv:10.6f}:"
+        f"{mat:>10}:{typ:>6}:{X:9.4f}:{Z:9.4f}:{pitch:9.4f}:{curv:10.6f}:{cx}:"
         f"{str(gx):>5}:{str(order):>6}:{num(diam,7,3)}:{num(dx,7,3)}:{num(dy,7,3)}:"
         f"{form:>4}: {note}"
     )
@@ -154,7 +165,7 @@ def build():
     zc3 = zc2 + T_CROWN
     rows += [
         ("", "lens", 0.0, zc1, 0.0, C1, "", "", DIAM_COLL, "", "", "",
-         "collimator AC254-045-B x1.5556 s1 (N-SF6HT flint outer, f=70 O25.4)"),
+         "collimator AC254-045-B x1.7333 s1 (N-SF6HT flint outer, f=78 O25.4)"),
         ("N-SF6HT", "lens", 0.0, zc2, 0.0, C2, "", "", DIAM_COLL, "", "", "",
          "collimator s2 (N-SF6HT -> N-LAK22)"),
         ("N-LAK22", "lens", 0.0, zc3, 0.0, -C3, "", "", DIAM_COLL, "", "", "",
@@ -164,7 +175,7 @@ def build():
     # aperture stop in the collimated space: sets both f/# and the camera field footprint
     if STOP:
         rows.append(("", "iris", 0.0, zc3 + D_STOP, 0.0, 0.0, "", "", STOP, "", "", "",
-                     f"aperture stop O{STOP:.0f} (camera f/{70.0 / STOP:.1f}, collimator f/{70.0 / STOP:.1f})"))
+                     f"aperture stop O{STOP:.0f} (camera f/{SCALE * 45.0 / STOP:.1f}, collimator f/{SCALE * 45.0 / STOP:.1f})"))
 
     # grating (reflective) on the +Z axis
     zg = zc3 + D_COLL_GRT
@@ -215,7 +226,7 @@ def build():
 
     # camera: same scaled doublet, flipped (crown outer to the collimated beam)
     specs = [
-        (D_GRT_CAM, C3,  "",        "camera AC254-045-B x1.5556 s1 (N-LAK22 crown outer, f=70 O40)"),
+        (D_GRT_CAM, C3,  "",        "camera AC254-045-B x1.7333 s1 (N-LAK22 crown outer, f=78 O40)"),
         (T_CROWN,   -C2, "N-LAK22", "camera s2 (N-LAK22 -> N-SF6HT)"),
         (T_FLINT,   -C1, "N-SF6HT", "camera s3 (N-SF6HT -> detector)"),
     ]
@@ -236,10 +247,11 @@ def build():
         rows.append(("N-BK7", "lens", X, Z, theta, 0.0, "", "", DIAM_CAM, "", "", "",
                      "field flattener s2 (plano -> detector)"))
 
-    # optional CYLINDRICAL field flattener (env-driven): power only in the dispersion (x)
-    # plane -- flattens the tangential focal surface, the only one that sets resolution,
-    # without magnifying the height. trace_check.py treats a surface whose note contains
-    # "CYL" as a cylinder (axis along local y). CYLF = cylinder focal length in mm (negative).
+    # CYLINDRICAL field flattener (env-driven, ON by default): power only in the dispersion (x)
+    # plane -- flattens the tangential focal surface, the only one that sets resolution, without
+    # magnifying the height. row() writes it in BeamFour's cylinder convention (curvature in the
+    # Cx column, Curv = 0); trace_check.py reads that same Cx column. Its curvature is carried in
+    # the normal `curv` slot here and moved to Cx at write time. CYLF = cyl focal length mm (neg).
     _cylf = os.environ.get("CYLF", "-70")   # cylinder ON by default
     if _cylf:
         _cylf = float(_cylf)
@@ -266,8 +278,8 @@ def main():
     header = [
         f"{n}  {os.path.basename(OPTFILE)}  500-1000 nm spectrograph ({tag}): {front} "
         f"-> f78 doublet / 600 l/mm REFLECTIVE / f78 doublet / cyl flattener -> TCD1304",
-        "     Index:  type:        X:        Z:    Pitch:      Curv:   Gx: Order:   Diam:     Dx:     Dy:Form: notes",
-        "----------:------:---------:---------:---------:----------:-----:------:-------:-------:-------:----:",
+        "     Index:  type:        X:        Z:    Pitch:      Curv:        Cx:   Gx: Order:   Diam:     Dx:     Dy:Form: notes",
+        "----------:------:---------:---------:---------:----------:----------:-----:------:-------:-------:-------:----:",
     ]
     with open(OPTFILE, "w") as f:
         f.write("\n".join(header + [row(*r) for r in rows]) + "\n")

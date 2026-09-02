@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Standalone sequential ray trace of ../Broadband.OPT — a debugging tool, not a design tool.
+"""Standalone sequential ray trace of Broadband.OPT — a debugging tool, not a design tool.
 
 Answers one question BeamFour's Layout cannot: *which surface* is killing a ray. When a
 wavelength silently vanishes from the layout, run this and it names the blocking surface.
@@ -39,6 +39,12 @@ def load_med():
 
 
 def load_opt(path=OPT):
+    """Parse Broadband.OPT (BeamFour layout, with the Cx column).
+
+    Columns: Index:type:X:Z:Pitch:Curv:Cx:Gx:Order:Diam:Dx:Dy:Form:notes.
+    A cylinder is encoded BeamFour-style -- Curv = 0 with the curvature in Cx -- so a non-blank
+    Cx marks a cylindrical surface (axis along local y), and its Cx value is the curvature used.
+    """
     rows = open(path).read().splitlines()
     out = []
     for ln in rows[3:]:
@@ -46,14 +52,17 @@ def load_opt(path=OPT):
             continue
         c = ln.split(":")
         g = lambda i: c[i].strip()
+        cx = g(6)
+        cyl = bool(cx)                               # cylinder: curvature lives in the Cx column
+        curv = float(cx) if cyl else float(g(5))
         out.append(dict(mat=g(0), typ=g(1), X=float(g(2)), Z=float(g(3)),
-                        pitch=float(g(4)), curv=float(g(5)),
-                        gx=float(g(6)) if g(6) else 0.0,
-                        order=float(g(7)) if g(7) else 0.0,
-                        diam=float(g(8)) if g(8) else 0.0,
-                        dx=float(g(9)) if g(9) else 0.0,
-                        dy=float(g(10)) if g(10) else 0.0,
-                        note=c[12].strip() if len(c) > 12 else ""))
+                        pitch=float(g(4)), curv=curv, cyl=cyl,
+                        gx=float(g(7)) if g(7) else 0.0,
+                        order=float(g(8)) if g(8) else 0.0,
+                        diam=float(g(9)) if g(9) else 0.0,
+                        dx=float(g(10)) if g(10) else 0.0,
+                        dy=float(g(11)) if g(11) else 0.0,
+                        note=c[13].strip() if len(c) > 13 else ""))
     return out
 
 
@@ -152,7 +161,7 @@ def trace(p, d, lam_nm, surfs, med, start=0, want_dir=False):
     for i in range(start, len(surfs)):
         s = surfs[i]
         lp, ld = to_local(p, d, s)
-        hit = intersect(lp, ld, s["curv"], cyl=("CYL" in s.get("note", "")))
+        hit = intersect(lp, ld, s["curv"], cyl=s["cyl"])
         if hit is None:
             return i, "no intersection"
         q, n = hit
