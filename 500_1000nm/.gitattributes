@@ -1,0 +1,17 @@
+# Normalize line endings so the repo is consistent across Windows / macOS / Linux.
+# Git stores text as LF; by default it checks out native endings per OS.
+* text=auto
+
+# BeamFour input/output data files: pin to LF everywhere (working tree too) so the
+# reference prescriptions are byte-stable no matter which OS regenerates them, and
+# diffs stay clean. BeamFour reads LF without issue.
+*.OPT  text eol=lf
+*.MED  text eol=lf
+*.RAY  text eol=lf
+
+# Treat these as text (explicit, so Git never guesses "binary").
+*.py    text
+*.md    text
+*.html  text
+*.json  text
+*.txt   text

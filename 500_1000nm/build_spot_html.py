@@ -204,7 +204,7 @@ b.hl{{color:var(--ink)}}
       <p class="sub">BeamFour ray trace: 100&nbsp;µm fiber → 30&nbsp;µm slit → f=78&nbsp;mm collimator → 600&nbsp;l/mm grating →
         f=78&nbsp;mm camera → <b class="hl">cylindrical field flattener</b> → TCD1304 (29.1&nbsp;mm), detector tilted 6°.
         169 hexapolar pupil rays/wavelength at f/4.9. The cylinder corrects the dispersion-plane field curvature,
-        flattening the response to ~2&nbsp;nm across the band. Airy disk shown as the diffraction floor.</p>
+        flattening the response to ~1.9&nbsp;nm across the band. Airy disk shown as the diffraction floor.</p>
     </div>
     <button class="tog" id="tog" aria-label="Toggle colour theme">◐ theme</button>
   </div>
@@ -219,7 +219,7 @@ b.hl{{color:var(--ink)}}
 
   <div class="card">
     <h2>Where each wavelength lands</h2>
-    <p class="cap">The grating sorts colour by position on the 14.336&nbsp;mm sensor — this strip is the spectrum itself.</p>
+    <p class="cap">The grating sorts colour by position on the {DET_MM}&nbsp;mm sensor — this strip is the spectrum itself.</p>
     {strip}
   </div>
 
@@ -234,7 +234,7 @@ b.hl{{color:var(--ink)}}
   <div class="card">
     <h2>Spot-diagram matrix — common ±430 µm scale</h2>
     <p class="cap">Each panel: {minn}–{maxn} of 169 traced ray hits at the detector, referenced to the spot centroid.
-      Dashed ring = RMS radius · centre dot = Airy disk (diffraction floor, ~4diffraction floor, ~2&nbsp;µmnbsp;µm — sub-pixel here).
+      Dashed ring = RMS radius · centre dot = Airy disk (diffraction floor, ~4&nbsp;µm — sub-pixel here).
       Δλ is the FWHM-based resolution element.</p>
     <div class="matrix">{panels}</div>
     <div class="legend">
