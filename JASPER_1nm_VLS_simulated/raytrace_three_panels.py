@@ -40,6 +40,10 @@ PANELS=[
 def run(fn, rho, corr):
     EPD=fnum_to_EPD(fn)
     d=R.Design("sim",N,ALPHA,rA,rB,Ry,rho,EPD,band)
+    # Panel C VLS = free-polynomial fit (the theoretical optimum of the groove correction at f/10).
+    # Realizability of this profile by a REAL 2-point holographic exposure is proven separately in
+    # recording_optimize_sim.py (a real 488 nm recording reaches ~0.90 nm vs this ~0.89 nm, a 0.02 nm
+    # gap) -- so this best case is a validated target, not an over-promise.
     c=R.fit_vls(d) if corr else [0,0,0]
     rBf=d.best_focus(c); Cs=d.detector(c,rBf)
     cen=[np.mean(d.trace(l,c,npup=1500,Csys=Cs)[0]) for l in band]
@@ -80,7 +84,7 @@ for prow,P in enumerate(PANELS):
 
 fig.suptitle("JASPER simulated VLS grating (230 l/mm) — the path to ~1 nm across 500–1000 nm\n"
              "A: f/5.3 spherical (bright)  →  B: f/8 toroidal (throughput)  →  C: f/10 toroidal + VLS correction (clears the 500 nm blue edge)\n"
-             "standalone ray tracer · best focus · Panel C VLS = best case (assumes fabricated groove profile matches the fit)",
+             "standalone ray tracer · best focus · Panel C VLS = best case (fitted groove profile; realizable by a real 488 nm 2-point recording — see recording_optimize_sim.py)",
              fontsize=10.3,y=1.03)
 fig.text(0.5,-0.015,"Shaded band = 20 µm slit. The binding constraint is the 500 nm blue edge: aberration-limited, not slit/plate-limited. "
          "Stopping down (A→B) and the toroid help, but only the VLS groove correction (B→C) pulls the blue edge under ~1 nm.",

@@ -5,6 +5,10 @@ each correction buys:
     2. Concave toroidal, no VLS       -> poor resolution, GOOD throughput   (toroid fixes throughput)
     3. Concave toroidal + VLS         -> GOOD resolution, GOOD throughput    (VLS fixes resolution)
 The point: resolution and throughput are decoupled — VLS fixes one, the toroid fixes the other.
+NOTE bar 3 is the analytic IDEALISED BOUND: defocus (F20) nulled at every wavelength. That is what a
+detector bent to the true focal curve would see; a single groove chirp on a FLAT detector nulls defocus
+at only ~2 wavelengths. Real (ray-traced, detector at best focus) numbers: ~1.3 nm at f/5.3 and ~0.75 nm
+at f/10, as the width holding 80 % of the line's light (resolution_metrics.py). See validate_models.py.
 Reads lpf_all_designs.json (run lpf_resolution.py first). Palette validated CVD-safe (ΔE 16)."""
 import json, numpy as np, matplotlib; matplotlib.use("Agg")
 import matplotlib.pyplot as plt
@@ -15,7 +19,7 @@ sph=D["Simulated VLS — SPHERICAL"]; tor=D["Simulated VLS — TOROIDAL"]
 cfg=[
  ("Concave spherical\n(no VLS)",      sph["dlam_classical_mean"], sph["astig_mm"], "#e8912a"),
  ("Concave toroidal\n(no VLS)",       tor["dlam_classical_mean"], tor["astig_mm"], "#1aa5cf"),
- ("Concave toroidal\n+ VLS",          tor["dlam_corr_mean"],      tor["astig_mm"], "#2f8f5b"),
+ ("Concave toroidal\n+ VLS (idealised)", tor["dlam_corr_mean"],  tor["astig_mm"], "#2f8f5b"),
 ]
 labels=[c[0] for c in cfg]; res=[c[1] for c in cfg]; ast=[c[2] for c in cfg]; cols=[c[3] for c in cfg]
 INK="#222222"; MUTE="#5a6672"
@@ -32,7 +36,7 @@ ax1.set_xlabel("Spectral resolution Δλ (nm) — lower is better",fontsize=9.5,
 ax1.set_title("Resolution",fontsize=12,color=INK,fontweight="bold")
 ax1.grid(axis="x",alpha=0.22); ax1.set_axisbelow(True)
 for s in ("top","right","left"): ax1.spines[s].set_visible(False)
-ax1.text(1.75,y[2],"◄  VLS fixes resolution",fontsize=9,color="#2f8f5b",va="center",ha="left",fontweight="bold")
+ax1.text(1.75,y[2],"◄  VLS fixes resolution\n    (idealised bound — see note)",fontsize=9,color="#2f8f5b",va="center",ha="left",fontweight="bold")
 
 # ---- panel 2: astigmatism / throughput (log) ----
 ax2.barh(y,ast,color=cols,height=0.62,zorder=3)
@@ -49,8 +53,10 @@ ax2.text(1.2,1.0,"◄ toroid fixes throughput",fontsize=9,color="#1391bd",va="ce
 
 fig.suptitle("JASPER simulated VLS grating — what each correction buys (Noda light-path-function, f/5.3)",
              fontsize=12.5,y=1.03,color=INK)
-fig.text(0.5,-0.06,"Resolution and throughput are independent knobs: the VLS groove correction sharpens the spectrum (3.7 → 0.9 nm), "
-         "the toroidal substrate collects the light (1.0 → 0.04 mm astigmatic line, ~19% → ~100% on the pixel). "
-         "Best-case correction; simulated / theoretical design.",fontsize=8,color=MUTE,ha="center",wrap=True)
+fig.text(0.5,-0.10,"Resolution and throughput are independent knobs: the VLS groove correction sharpens the spectrum, "
+         "the toroidal substrate collects the light (1.0 → 0.04 mm astigmatic line, ~19% → ~100% on the pixel).\n"
+         "Note: bar 3 is the analytic idealised bound (defocus nulled at every wavelength, as if the detector followed the focal curve). "
+         "A single real groove chirp on a flat detector,\nray-traced, gives ~1.3 nm at f/5.3 and ~0.75 nm at f/10 (80 %-energy width, resolution_metrics.py). "
+         "Simulated / theoretical design.",fontsize=8,color=MUTE,ha="center")
 fig.tight_layout(); fig.savefig("jasper_lpf_comparison.png",dpi=150,bbox_inches="tight")
 print(f"wrote jasper_lpf_comparison.png | res {[round(r,2) for r in res]} | astig {[round(a,2) for a in ast]}")

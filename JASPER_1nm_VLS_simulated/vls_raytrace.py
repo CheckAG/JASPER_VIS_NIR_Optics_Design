@@ -179,6 +179,6 @@ if __name__=="__main__":
     band=[0.5,0.6,0.7,0.8,0.9,1.0]  # um
     # Shimadzu P0400-01 (real, spherical): 400 l/mm, alpha=20, arms 96.9, R~100.3
     p04=Design("Shimadzu P0400-01",400.0,20.0,96.9,96.9,100.29,100.29,18.3,band)
-    evaluate(p04,[0,0,0],"CLASSICAL grooves (constant density)  [LPF classical ~1.5 nm]")
+    evaluate(p04,[0,0,0],"CLASSICAL grooves  [detector here is perpendicular to the mid-band ray, NOT the tilted datasheet plane -- not comparable to the LPF number; see validate_models.py]")
     c=fit_vls(p04); print(f"  fitted VLS c={c}")
-    evaluate(p04,c,"FLAT-FIELD (fitted VLS)  [LPF best-case ~0.60 nm]")
+    evaluate(p04,c,"FLAT-FIELD (fitted VLS)  [LPF ~0.60 nm is an idealisation (defocus nulled at every lambda); see validate_models.py]")

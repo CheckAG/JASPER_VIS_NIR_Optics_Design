@@ -7,7 +7,9 @@ sequential ray trace was found unreliable for these off-axis reflective diffract
 LPF is self-consistent: the grating equation sets dispersion; F20 (defocus), F30 (coma) and
 F02 (astigmatism) set spot sizes straight from the cited geometry. For each design we report:
   - CLASSICAL grooves (no aberration correction): rigorous, no unknowns -> a resolution floor
-  - FLAT-FIELD corrected (VLS/holographic nulls F20 across the band): best-case, coma-limited
+  - IDEALISED BOUND: F20 (defocus) nulled at EVERY wavelength, coma-limited. Physically this is a
+    detector that follows the curved focal surface; a single groove chirp (VLS or two-point hologram) on a
+    FLAT detector nulls defocus at only ~2 wavelengths (see validate_models.py for the real single-chirp case)
 and the astigmatic line height (throughput). Only the best-case assumes an ideal groove
 correction (unpublished for the catalog gratings); the classical case has no unknowns."""
 import numpy as np, json
@@ -19,7 +21,7 @@ def analyse(name, N_lpm, alpha_deg, rA, rB, Rtan, rho, EPD, band, beta_ref_deg):
     lams=np.array(band)  # um
     def beta(l): return np.arcsin(m*(l*1000)/d_nm - np.sin(a))
     def rp(b):  return rB/np.cos(b-bref)                 # flat detector faces the beta_ref ray
-    def plate(b,r): return d_nm*np.cos(b)/(m*r)          # nm/mm
+    def plate(b,r): return d_nm*np.cos(b)*np.cos(b-bref)/(m*r)   # nm/mm along the flat detector, Shimadzu eq (24)
     def F20(b,r,R): return np.cos(a)**2/rA-np.cos(a)/R + np.cos(b)**2/r-np.cos(b)/R
     def F30(b,r,R): return (np.sin(a)/rA)*(np.cos(a)**2/rA-np.cos(a)/R)+(np.sin(b)/r)*(np.cos(b)**2/r-np.cos(b)/R)
     def F02(b,r,rho):
@@ -55,7 +57,7 @@ def show(o):
     print(f"  {'lam':>5}{'beta':>8}{'plate':>7}{'RMScla':>8}{'RMScorr':>8}{'astig(mm)':>10}{'dlamCorr':>9}")
     for x in o["rows"]:
         print(f"  {x['lam']:>5}{x['beta']:>8.2f}{x['plate']:>7.1f}{x['rms_classical']:>8.1f}{x['rms_corr']:>8.1f}{x['astig_mm']:>10.2f}{x['dlam_corr']:>9.2f}")
-    print(f"  >> plate {o['plate_lo']:.1f}-{o['plate_hi']:.1f} nm/mm | corrected(best-case) MEAN {o['dlam_corr_mean']:.2f} WORST {o['dlam_corr_worst']:.2f} nm | classical MEAN {o['dlam_classical_mean']:.2f} nm | astig line {o['astig_mm']:.2f} mm")
+    print(f"  >> plate {o['plate_lo']:.1f}-{o['plate_hi']:.1f} nm/mm | idealised-bound MEAN {o['dlam_corr_mean']:.2f} WORST {o['dlam_corr_worst']:.2f} nm | classical MEAN {o['dlam_classical_mean']:.2f} nm | astig line {o['astig_mm']:.2f} mm")
 
 if __name__=="__main__":
     band=[0.5,0.6,0.7,0.8,0.9,1.0]
@@ -65,7 +67,7 @@ if __name__=="__main__":
     designs=[
       analyse("Simulated VLS — SPHERICAL",  230, 12.34, 137.357,126.75, 133.0, 133.0,   26.0, band, -2.4),
       analyse("Simulated VLS — TOROIDAL",   230, 12.34, 137.357,126.75, 133.0, rho_sim, 26.0, band, -2.4),
-      analyse("Shimadzu P0400-01 (real, spherical)", 400, 20.0, 96.9, 96.9, 100.29, 100.29, 18.3, band, -7.51),
+      analyse("Shimadzu P0400-01 (real, spherical)", 400, 20.0, 96.9, 96.93, 99.61, 99.61, 18.3, band, -7.51),  # R from the blank sag, plane from the datasheet r'i / beta_i (validate_p0400.py)
     ]
     print(f"(simulated toroid sag radius rho={rho_sim:.1f} mm)")
     for o in designs: show(o)

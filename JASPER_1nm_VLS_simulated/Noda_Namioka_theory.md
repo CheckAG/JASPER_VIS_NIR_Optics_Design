@@ -142,8 +142,11 @@ traces out the **spot diagram**:
 
 Converting the dispersion blur to a spectral figure uses the **reciprocal linear dispersion**:
 ```
-plate scale  =  d·cos β / (m·r′)     [nm per mm on the detector]
+plate scale  =  d·cos β / (m·r′)                     [detector perpendicular to the λ ray]
+plate scale  =  d·cos β · cos(βᵢ − β) / (m·r′)       [flat detector tilted to the βᵢ ray, nm/mm along it]
 ```
+The second form is Shimadzu's eq. 24 for flat-field gratings, with r′ = r′ᵢ / cos(βᵢ − β) the distance along
+the λ ray and r′ᵢ the perpendicular distance to the detector. All flat-detector scripts use it.
 and JASPER's resolution budget combines the independent contributions in quadrature:
 ```
 Δλ  =  √( slit² + (2.355·RMS_disp)² + pixel² + FWHM_diffraction² )  ×  plate_scale
@@ -182,6 +185,16 @@ can compute the geometry-fixed terms exactly but must treat the correction as *i
 > gap between this write-up (the full theory) and the code (a two-line best-case/worst-case bracket).
 > Running the code, you step through: grating equation → F₂₀/F₃₀/F₀₂ → quadrature — no δF's to wade
 > through. Deriving the actual recording geometry (the δF's) is a separate, larger task.
+
+> **Correction (Release 2): the "best-case flat-field" is an idealised bound, not a buildable grating.**
+> Nulling F₂₀ at *every* wavelength would need the groove correction itself to change with wavelength.
+> It can't: a grating has one fixed groove pattern for all wavelengths, and its defocus contribution is
+> λ × (a constant set by the chirp c₁, or by the recording geometry). The geometric defocus on a flat
+> detector does not scale like λ, so one chirp can cancel it at only ~2 wavelengths (a third with the
+> right detector tilt). The bound is still physically meaningful: it is what a detector *bent to the true
+> focal curve* would see, or a scanning instrument that refocuses per wavelength. `validate_models.py`
+> reports both — the bound and the real single chirp — in each model, and the recording geometry is now
+> derived in `recording_optimize_sim.py` / `JASPER_VLS_coefficients_derivation.md`.
 
 ---
 
@@ -251,8 +264,8 @@ give the same answer, so it is not a surface artifact) and it is **strongly f-nu
 | f/12  | ~1.0 nm |
 | (aberration-free floor) | ~0.6 nm |
 
-So the LPF's coma-limited "best-case" (~0.6 nm) is really the **aberration-free floor** — reached
-only when the aperture is stopped down. At a usable, bright f/5.3 the grating is
+So the LPF's coma-limited idealised bound (~0.6 nm) is really the **aberration-free floor** — reached
+at a single chirp's defocus nulls, and across the band only when the aperture is stopped down. At a usable, bright f/5.3 the grating is
 higher-order-aberration-limited (~2 nm). The honest headline is the tradeoff, not a single number:
 **sub-nm capable when stopped to ~f/10–12; ~1 nm at f/8; ~2 nm at the bright f/5.3.** f-number is a
 real design knob the 3rd-order theory hid. (Note: the ~f/10 setting uses a *smaller* beam on the

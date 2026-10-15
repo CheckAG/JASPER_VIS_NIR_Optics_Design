@@ -2,4 +2,6 @@ __pycache__/
 *.pyc
 lpf_all_designs.json
 # generated figures land in the working dir when scripts run; the shipped copies live in figures/
-/jasper_*.png
+/*.png
+/*.json
+log_*.txt
